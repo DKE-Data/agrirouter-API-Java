@@ -35,22 +35,16 @@ public interface ParameterValidation {
     //
   }
 
-  /** Rise an exception if the parameter was not valid. */
-  default void rise() {
-    throw new IllegalParameterDefinitionException(
-        "Parameter was not defined correctly, please check the values.");
-  }
-
   /**
    * Rise an exception if the parameter was not valid.
    *
    * @param message -
    */
-  default void rise(String message) {
+  default void rise(String message, String parameterName) {
     throw new IllegalParameterDefinitionException(
         String.format(
-            "Parameter was not defined correctly, please check the values. Error message is '%s'.",
-            message));
+            "Parameter '%s' was not defined correctly, please check the values. Error message is '%s'.",
+            parameterName, message));
   }
 
   /**
@@ -58,9 +52,10 @@ public interface ParameterValidation {
    *
    * @param o -
    */
-  default void nullCheck(Object o) {
+  default void nullCheck(String parameterName, Object o) {
     if (null == o) {
-      this.rise("The parameter should not have been null, please check your values.");
+      this.rise(
+          "The parameter '%s' should not have been null, please check your values.", parameterName);
     }
   }
 
@@ -69,9 +64,11 @@ public interface ParameterValidation {
    *
    * @param s -
    */
-  default void isBlank(String s) {
+  default void isBlank(String parameterName, String s) {
     if (StringUtils.isBlank(s)) {
-      this.rise("The parameter should not have been blank, please check your values.");
+      this.rise(
+          "The parameter '%s' should not have been blank, please check your values.",
+          parameterName);
     }
   }
 
@@ -80,10 +77,12 @@ public interface ParameterValidation {
    *
    * @param c -
    */
-  default void nullOrEmpty(Collection<?> c) {
-    nullCheck(c);
+  default void nullOrEmpty(String parameterName, Collection<?> c) {
+    nullCheck(parameterName, c);
     if (c.isEmpty()) {
-      this.rise("The parameter should not have been empty, please check your values.");
+      this.rise(
+          "The parameter '%s' should not have been empty, please check your values.",
+          parameterName);
     }
   }
 }
